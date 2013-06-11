@@ -7,7 +7,6 @@
 //
 
 #import "MapViewController.h"
-#import <GoogleMaps/GoogleMaps.h>
 
 
 @interface MapViewController ()
@@ -33,7 +32,7 @@
     [super loadView];
     //Create default map view
     
-    GMSMapView *mapView = [[GMSMapView alloc] init];
+    //GMSMapView *mapView = [[GMSMapView alloc] init];
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.86 longitude:151.20 zoom:6];
     

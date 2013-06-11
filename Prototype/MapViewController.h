@@ -7,8 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GoogleMaps/GoogleMaps.h>
+
 
 @interface MapViewController : UIViewController
+{
+    GMSMapView *mapView;
+}
 
 - (IBAction)changeMapType:(id)sender;
 
