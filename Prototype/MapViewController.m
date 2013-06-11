@@ -47,52 +47,42 @@
     [[mapView settings] setCompassButton:YES ];
     self.view = mapView;
     
-    /*
-    //Creates a marker in the center of the map
-    GMSMarker *marker = [[GMSMarker alloc] init];
-    [marker setPosition:CLLocationCoordinate2DMake(-33.86, 151.20)];
-    [marker setTitle:@"Sydney"];
-    [marker setSnippet:@"Australia"];
-    [marker setMap:mapView];
-    */
-    
-    
     //Create UISegmentedControl
     NSArray *mapTypes= [NSArray arrayWithObjects:@"Standard", @"Satellite", @"Hybrid", @"Terrain", nil];
     UISegmentedControl *mapTypeControl = [[UISegmentedControl alloc] initWithItems:mapTypes];
     [mapTypeControl setSegmentedControlStyle:UISegmentedControlStylePlain];
-    
-    //Manually set frame - need to refactor for different screen sizes
-    [mapTypeControl setFrame:CGRectMake(10, 460, 240, 30)];
+    [mapTypeControl setFrame:CGRectZero];
     UIFont *font = [UIFont boldSystemFontOfSize:10.0f];
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
     [mapTypeControl setTitleTextAttributes:attributes forState:UIControlStateNormal];
     
     //Attach IBAction
     [mapTypeControl addTarget:self action:@selector(changeMapType:) forControlEvents:UIControlEventValueChanged];
-    //Add mapTypeControl to main view
+    
+    //Add UISegmentedControl to main view and set visual constraints
     [mapView addSubview:mapTypeControl];
+    [mapTypeControl setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-5-[mapTypeControl]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(mapTypeControl)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[mapTypeControl]-5-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(mapTypeControl)]];
     
+    //Create UIToolBar to add Places filter buttons
+    UIToolbar *placesTypes = [[UIToolbar alloc] initWithFrame:CGRectZero];
     
-    //Create UIToolBar to add Places filters
-    UIToolbar *placesTypes = [[UIToolbar alloc] init];
-    
-    //Manually set frame - need to refactor for different screen sizes
-    [placesTypes setFrame:CGRectMake(0, 0, 320, 50)];
-    
-    //Create UIBarButtons
+    //Create UIBarButtons including flexible space to center buttons
     UIBarButtonItem *restaurantsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Restaurants" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
     UIBarButtonItem *gasStationsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Gas Stations" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
     UIBarButtonItem *barsAndClubsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Shopping Mall" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
-    
-    NSArray *barButtonArray = [NSArray arrayWithObjects:restaurantsBarButton, gasStationsBarButton, barsAndClubsBarButton, nil];
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    NSArray *barButtonArray = [NSArray arrayWithObjects: flexibleSpace, restaurantsBarButton, gasStationsBarButton, barsAndClubsBarButton, flexibleSpace, nil];
     
     //Add bar buttons to toolbar
     [placesTypes setItems:barButtonArray animated:YES];
     
-    //Add placesType to main view
+    //Add placesType to main view and set visual constraints
     [mapView addSubview:placesTypes];
-    
+    [placesTypes setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[placesTypes]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[placesTypes]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
     
 }
 
@@ -132,8 +122,7 @@
     
 }
 
-//Bar Button Methods for placing requests to Google Places API
-
+//Bar Button Methods for call requests to Google Places API
 - (IBAction)toolBarButtonPress:(id)sender
 {
     //Grab a pointer to the bar button that was pressed
@@ -161,7 +150,7 @@
     NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&radius=%@&types=%@&sensor=true&key=%@", currentCoordinate.latitude, currentCoordinate.longitude, [NSString stringWithFormat:@"%i", currentRadius], googleType, kGOOGLE_PLACES_API_KEY];
     NSURL *googleRequestURL = [NSURL URLWithString:url];
     
-    //Experimental code for JSON Parsing - different from NSURLConnection
+    //Asynchronous call in separate thread to parse JSON
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
         [self performSelectorOnMainThread:@selector(parseGooglePlacesJson:) withObject:data waitUntilDone:YES];
@@ -175,7 +164,6 @@
     //The results will be an array obtained from the NSDictionary object with the key "results". This is done through visual inspection.
     NSArray* places= [json objectForKey:@"results"];
     [self plotMapMarkers:places];
-    NSLog(@"The array has is: %@", places);
 }
 
 - (void)plotMapMarkers:(NSArray *)returnedPlaces {
@@ -199,7 +187,6 @@
         [marker setTitle:name];
         [marker setAnimated:YES];
         [marker setMap:mapView];
-        NSLog(@"New marker created: %@", marker);
     }
 }
 

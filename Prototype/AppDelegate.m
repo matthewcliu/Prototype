@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 Matthew Liu. All rights reserved.
 //
 
-
 #import "AppDelegate.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "MapViewController.h"
@@ -24,7 +23,6 @@
     
     //Create map view
     [GMSServices provideAPIKey:kGOOGLE_IOS_API_KEY];
-    
     MapViewController *mapController = [[MapViewController alloc] init];
     
     //Create and load UITabBarController

@@ -11,8 +11,6 @@
 
 #define kGOOGLE_PLACES_API_KEY @"AIzaSyBaMoK7sjdLd41FcZf8zkkD_nE2d8ZmRw4"
 
-
-
 //Ensure view controller conforms to CLLocationManagerDelegate
 @interface MapViewController : UIViewController <CLLocationManagerDelegate>
 {
@@ -22,17 +20,9 @@
 }
 
 - (IBAction)changeMapType:(id)sender;
-
-//Bar button action
 - (IBAction)toolBarButtonPress:(id)sender;
-
-//Request to Google Places API
 - (void)fetchFromGooglePlaces:(NSString *)googleType;
-
-//Parsing Google Places API response
 - (void)parseGooglePlacesJson:(NSData *)responseData;
-
-//Plotting markers on map
 - (void)plotMapMarkers:(NSArray *)returnedPlaces;
 
 @end
