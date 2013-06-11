@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <GoogleMaps/GoogleMaps.h>
 
-
-@interface MapViewController : UIViewController
+//Ensure view controller conforms to CLLocationManagerDelegate
+@interface MapViewController : UIViewController <CLLocationManagerDelegate>
 {
     GMSMapView *mapView;
+    CLLocationManager *locationManager;
+    CLLocation *userLocation;
 }
 
 - (IBAction)changeMapType:(id)sender;

@@ -22,6 +22,11 @@
         // Custom initialization
         UITabBarItem *tabBar = [self tabBarItem];
         [tabBar setTitle:@"Google Maps"];
+        
+        //Start location manager to detect initial user location. Unsure if this is the most efficient way of doing this as Google probably already polls for the location
+        locationManager = [[CLLocationManager alloc] init];
+        [locationManager setDelegate:self];
+        [locationManager startUpdatingLocation];
     }
     return self;
 }
@@ -30,11 +35,12 @@
 {
     
     [super loadView];
-    //Create default map view
+    //Create map view with user location
     
-    //GMSMapView *mapView = [[GMSMapView alloc] init];
+    CLLocationCoordinate2D currentCoordinate = [userLocation coordinate];
+    NSLog(@"The starting coordinate is: (%f, %f)", currentCoordinate.latitude, currentCoordinate.longitude);
     
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:-33.86 longitude:151.20 zoom:6];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentCoordinate.latitude longitude:currentCoordinate.longitude zoom:6];
     
     mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
     [mapView setMyLocationEnabled:YES];
@@ -111,6 +117,20 @@
         }
     }
     
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    //NSLog(@"%@", locations);
+    userLocation = [locations lastObject];
+    
+    NSLog(@"User is currently at: %@", userLocation);
+    //How many seconds ago was this new location created?
+    NSTimeInterval t = [[userLocation timestamp] timeIntervalSinceNow];
+    if(t < -180) {
+        return;
+    }
+
 }
 
 @end
