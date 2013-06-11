@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import <GoogleMaps/GoogleMaps.h>
+#import "MapViewController.h"
 
 @implementation AppDelegate
 
@@ -14,6 +16,22 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
+    
+    //Create dummy view
+    UIViewController *dummyController = [[UIViewController alloc] init];
+    [[dummyController view] setBackgroundColor:[UIColor grayColor]];
+    
+    //Create map view
+    [GMSServices provideAPIKey:@"AIzaSyCKWky1DoE4ZES4QU1fuuFyMHANGqsrtuI"];
+    
+    MapViewController *mapController = [[MapViewController alloc] init];
+    
+    //Create and load UITabBarController
+    UITabBarController *mainController = [[UITabBarController alloc] init];
+    NSArray *viewControllers = [NSArray arrayWithObjects:dummyController, mapController, nil];
+    [mainController setViewControllers:viewControllers];
+    [self.window setRootViewController:mainController];
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
