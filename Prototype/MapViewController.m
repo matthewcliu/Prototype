@@ -83,7 +83,7 @@
     //Create UIBarButtons
     UIBarButtonItem *restaurantsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Restaurants" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
     UIBarButtonItem *gasStationsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Gas Stations" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
-    UIBarButtonItem *barsAndClubsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Bars & Clubs" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
+    UIBarButtonItem *barsAndClubsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Shopping Mall" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
     
     NSArray *barButtonArray = [NSArray arrayWithObjects:restaurantsBarButton, gasStationsBarButton, barsAndClubsBarButton, nil];
     
@@ -141,5 +141,41 @@
     
     NSString *buttonTitle = [button.title lowercaseString];
     NSLog(@"This button was pressed: %@", buttonTitle);
+    
+    if ([buttonTitle isEqual: @"restaurants"]) {
+        [self fetchFromGooglePlaces:@"restaurant"];
+    } else if ([buttonTitle isEqual:@"gas stations"]) {
+        [self fetchFromGooglePlaces:@"gas_station"];
+    } else if([buttonTitle isEqual:@"shopping mall"]) {
+        [self fetchFromGooglePlaces:@"shopping_mall"];
+    }
 }
+
+- (void)fetchFromGooglePlaces:(NSString *)googleType {
+    //Build the URL to send to Google
+    CLLocationCoordinate2D currentCoordinate = [userLocation coordinate];
+    
+    //This is hacky - shoudl really base this on the zoom level - refactor later
+    int currentRadius = 1000;
+    
+    NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&radius=%@&types=%@&sensor=true&key=%@", currentCoordinate.latitude, currentCoordinate.longitude, [NSString stringWithFormat:@"%i", currentRadius], googleType, kGOOGLE_PLACES_API_KEY];
+    NSURL *googleRequestURL = [NSURL URLWithString:url];
+    
+    //Experimental code for JSON Parsing - different from NSURLConnection
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData* data = [NSData dataWithContentsOfURL: googleRequestURL];
+        [self performSelectorOnMainThread:@selector(parseGooglePlacesJson:) withObject:data waitUntilDone:YES];
+    });
+}
+
+- (void)parseGooglePlacesJson:(NSData *)responseData {
+    NSError * error;
+    NSDictionary* json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
+    
+    //The results will be an array obtained from the NSDictionary object with the key "results". This is done through visual inspection.
+    NSArray* places= [json objectForKey:@"results"];
+    
+    NSLog(@"Google Data: %@", places);
+}
+
 @end
