@@ -156,7 +156,7 @@
     CLLocationCoordinate2D currentCoordinate = [userLocation coordinate];
     
     //This is hacky - shoudl really base this on the zoom level - refactor later
-    int currentRadius = 1000;
+    int currentRadius = 5000;
     
     NSString *url = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/search/json?location=%f,%f&radius=%@&types=%@&sensor=true&key=%@", currentCoordinate.latitude, currentCoordinate.longitude, [NSString stringWithFormat:@"%i", currentRadius], googleType, kGOOGLE_PLACES_API_KEY];
     NSURL *googleRequestURL = [NSURL URLWithString:url];
@@ -174,8 +174,33 @@
     
     //The results will be an array obtained from the NSDictionary object with the key "results". This is done through visual inspection.
     NSArray* places= [json objectForKey:@"results"];
+    [self plotMapMarkers:places];
+    NSLog(@"The array has is: %@", places);
+}
+
+- (void)plotMapMarkers:(NSArray *)returnedPlaces {
+    //Remove previous map markers
+    [mapView clear];
     
-    NSLog(@"Google Data: %@", places);
+    //Plot markers for selected Places type
+    for (int i =0; i< [returnedPlaces count]; i++) {
+        
+        //Traverse the JSON object tree
+        NSDictionary *place = [returnedPlaces objectAtIndex:i];
+        NSDictionary *geometry = [place objectForKey:@"geometry"];
+        NSDictionary *location = [geometry objectForKey:@"location"];
+        double latitude = [[location objectForKey:@"lat"] doubleValue];
+        double longitude = [[location objectForKey:@"lng"] doubleValue];
+        NSString *name = [place objectForKey:@"name"];
+        
+        //Create a marker
+        GMSMarker *marker = [[GMSMarker alloc] init];
+        [marker setPosition:CLLocationCoordinate2DMake(latitude, longitude)];
+        [marker setTitle:name];
+        [marker setAnimated:YES];
+        [marker setMap:mapView];
+        NSLog(@"New marker created: %@", marker);
+    }
 }
 
 @end

@@ -26,8 +26,13 @@
 //Bar button action
 - (IBAction)toolBarButtonPress:(id)sender;
 
+//Request to Google Places API
 - (void)fetchFromGooglePlaces:(NSString *)googleType;
 
+//Parsing Google Places API response
 - (void)parseGooglePlacesJson:(NSData *)responseData;
+
+//Plotting markers on map
+- (void)plotMapMarkers:(NSArray *)returnedPlaces;
 
 @end
