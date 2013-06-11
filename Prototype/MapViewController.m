@@ -75,6 +75,11 @@
     //Add mapTypeControl to main view
     [mapView addSubview:mapTypeControl];
     
+    
+    //Create UIToolBar to add Places filters
+    UIToolbar *placesTypes = [[UIToolbar alloc] init];
+    
+    
 }
 
 
