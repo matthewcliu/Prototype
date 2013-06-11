@@ -30,9 +30,6 @@
 - (void)loadView
 {
     
-    //Test push to github
-    //This is a test on branching and merging
-    
     [super loadView];
     //Create default map view
     
