@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Matthew Liu. All rights reserved.
 //
 
+
 #import "AppDelegate.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "MapViewController.h"
@@ -22,7 +23,7 @@
     [[dummyController view] setBackgroundColor:[UIColor grayColor]];
     
     //Create map view
-    [GMSServices provideAPIKey:@"AIzaSyCKWky1DoE4ZES4QU1fuuFyMHANGqsrtuI"];
+    [GMSServices provideAPIKey:kGOOGLE_IOS_API_KEY];
     
     MapViewController *mapController = [[MapViewController alloc] init];
     

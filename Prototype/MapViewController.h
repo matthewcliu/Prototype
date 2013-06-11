@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#define kGOOGLE_PLACES_API_KEY @"AIzaSyBaMoK7sjdLd41FcZf8zkkD_nE2d8ZmRw4"
+
+
 //Ensure view controller conforms to CLLocationManagerDelegate
 @interface MapViewController : UIViewController <CLLocationManagerDelegate>
 {
@@ -18,6 +21,9 @@
 }
 
 - (IBAction)changeMapType:(id)sender;
+
+//Dummy method
+- (IBAction)toolBarButtonPress:(id)sender;
 
 
 @end

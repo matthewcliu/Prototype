@@ -8,7 +8,6 @@
 
 #import "MapViewController.h"
 
-
 @interface MapViewController ()
 
 @end
@@ -26,6 +25,7 @@
         //Start location manager to detect initial user location. Unsure if this is the most efficient way of doing this as Google probably already polls for the location
         locationManager = [[CLLocationManager alloc] init];
         [locationManager setDelegate:self];
+        [locationManager setDesiredAccuracy:kCLLocationAccuracyBest];
         [locationManager startUpdatingLocation];
     }
     return self;
@@ -35,12 +35,11 @@
 {
     
     [super loadView];
-    //Create map view with user location
     
+    //Create map view with user location
     CLLocationCoordinate2D currentCoordinate = [userLocation coordinate];
     NSLog(@"The starting coordinate is: (%f, %f)", currentCoordinate.latitude, currentCoordinate.longitude);
-    
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentCoordinate.latitude longitude:currentCoordinate.longitude zoom:6];
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentCoordinate.latitude longitude:currentCoordinate.longitude zoom:12];
     
     mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
     [mapView setMyLocationEnabled:YES];
@@ -48,22 +47,22 @@
     [[mapView settings] setCompassButton:YES ];
     self.view = mapView;
     
+    /*
     //Creates a marker in the center of the map
     GMSMarker *marker = [[GMSMarker alloc] init];
     [marker setPosition:CLLocationCoordinate2DMake(-33.86, 151.20)];
     [marker setTitle:@"Sydney"];
     [marker setSnippet:@"Australia"];
     [marker setMap:mapView];
+    */
     
     
     //Create UISegmentedControl
     NSArray *mapTypes= [NSArray arrayWithObjects:@"Standard", @"Satellite", @"Hybrid", @"Terrain", nil];
     UISegmentedControl *mapTypeControl = [[UISegmentedControl alloc] initWithItems:mapTypes];
-    
-    //Style segmented control
     [mapTypeControl setSegmentedControlStyle:UISegmentedControlStylePlain];
     
-    //Manually set - need to refactor for different screen sizes
+    //Manually set frame - need to refactor for different screen sizes
     [mapTypeControl setFrame:CGRectMake(10, 460, 240, 30)];
     UIFont *font = [UIFont boldSystemFontOfSize:10.0f];
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:UITextAttributeFont];
@@ -71,7 +70,6 @@
     
     //Attach IBAction
     [mapTypeControl addTarget:self action:@selector(changeMapType:) forControlEvents:UIControlEventValueChanged];
-    
     //Add mapTypeControl to main view
     [mapView addSubview:mapTypeControl];
     
@@ -79,24 +77,34 @@
     //Create UIToolBar to add Places filters
     UIToolbar *placesTypes = [[UIToolbar alloc] init];
     
+    //Manually set frame - need to refactor for different screen sizes
+    [placesTypes setFrame:CGRectMake(0, 0, 320, 50)];
+    
+    //Create UIBarButtons
+    UIBarButtonItem *restaurantsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Restaurants" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
+    UIBarButtonItem *gasStationsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Gas Stations" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
+    UIBarButtonItem *barsAndClubsBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Bars & Clubs" style:UIBarButtonItemStyleBordered target:self action:@selector(toolBarButtonPress:)];
+    
+    NSArray *barButtonArray = [NSArray arrayWithObjects:restaurantsBarButton, gasStationsBarButton, barsAndClubsBarButton, nil];
+    
+    //Add bar buttons to toolbar
+    [placesTypes setItems:barButtonArray animated:YES];
+    
+    //Add placesType to main view
+    [mapView addSubview:placesTypes];
+    
     
 }
 
-
-- (void)viewDidLoad
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    userLocation = [locations lastObject];    
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
+//UISegmentedControl action for changing Google Maps type
 - (IBAction)changeMapType:(id)sender
 {
+    //Grab a GMSMapView type pointer to the map
     GMSMapView *currentMap = (GMSMapView *)[self view];
     
     switch ([sender selectedSegmentIndex]) {
@@ -124,18 +132,14 @@
     
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+//Bar Button Methods for placing requests to Google Places API
+
+- (IBAction)toolBarButtonPress:(id)sender
 {
-    //NSLog(@"%@", locations);
-    userLocation = [locations lastObject];
+    //Grab a pointer to the bar button that was pressed
+    UIBarButtonItem *button = (UIBarButtonItem *)sender;
     
-    NSLog(@"User is currently at: %@", userLocation);
-    //How many seconds ago was this new location created?
-    NSTimeInterval t = [[userLocation timestamp] timeIntervalSinceNow];
-    if(t < -180) {
-        return;
-    }
-
+    NSString *buttonTitle = [button.title lowercaseString];
+    NSLog(@"This button was pressed: %@", buttonTitle);
 }
-
 @end

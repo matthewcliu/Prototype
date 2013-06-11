@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define kGOOGLE_IOS_API_KEY @"AIzaSyCKWky1DoE4ZES4QU1fuuFyMHANGqsrtuI"
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
