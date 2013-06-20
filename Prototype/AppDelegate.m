@@ -17,9 +17,13 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     
-    //Create dummy view
-    UIViewController *dummyController = [[UIViewController alloc] init];
-    [[dummyController view] setBackgroundColor:[UIColor grayColor]];
+    //Create Facebook auth view
+    UIViewController *facebookController = [[UIViewController alloc] init];
+    [[facebookController view] setBackgroundColor:[UIColor clearColor]];
+    
+    //Create Twitter post view
+    UIViewController *twitterController = [[UIViewController alloc] init];
+    [[twitterController view] setBackgroundColor:[UIColor clearColor]];
     
     //Create map view
     [GMSServices provideAPIKey:kGOOGLE_IOS_API_KEY];
@@ -27,7 +31,7 @@
     
     //Create and load UITabBarController
     UITabBarController *mainController = [[UITabBarController alloc] init];
-    NSArray *viewControllers = [NSArray arrayWithObjects:dummyController, mapController, nil];
+    NSArray *viewControllers = [NSArray arrayWithObjects:facebookController, twitterController, mapController, nil];
     [mainController setViewControllers:viewControllers];
     [self.window setRootViewController:mainController];
     
