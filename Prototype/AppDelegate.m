@@ -7,8 +7,12 @@
 //
 
 #import "AppDelegate.h"
+
+#import "TwitterViewController.h"
+
 #import <GoogleMaps/GoogleMaps.h>
 #import "MapViewController.h"
+
 
 @implementation AppDelegate
 
@@ -22,8 +26,9 @@
     [[facebookController view] setBackgroundColor:[UIColor clearColor]];
     
     //Create Twitter post view
-    UIViewController *twitterController = [[UIViewController alloc] init];
-    [[twitterController view] setBackgroundColor:[UIColor clearColor]];
+    TwitterViewController *twitterController = [[TwitterViewController alloc] init];
+    UINavigationController *twitterNavController = [[UINavigationController alloc] initWithRootViewController:twitterController];
+    [[twitterNavController view] setBackgroundColor:[UIColor clearColor]];
     
     //Create map view
     [GMSServices provideAPIKey:kGOOGLE_IOS_API_KEY];
@@ -31,7 +36,7 @@
     
     //Create and load UITabBarController
     UITabBarController *mainController = [[UITabBarController alloc] init];
-    NSArray *viewControllers = [NSArray arrayWithObjects:facebookController, twitterController, mapController, nil];
+    NSArray *viewControllers = [NSArray arrayWithObjects:facebookController, twitterNavController, mapController, nil];
     [mainController setViewControllers:viewControllers];
     [self.window setRootViewController:mainController];
     
