@@ -8,13 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TwitterViewController : UIViewController
+@interface TwitterViewController : UIViewController <UISearchBarDelegate>
 {
-    IBOutlet UITextField *twitterSearchField;
-    IBOutlet UIButton *queryButton;
+    IBOutlet UISearchBar *twitterSearchBar;
+    //IBOutlet UIButton *queryButton;
 }
 
-- (IBAction)queryTwitterSearchAPI:(id)sender;
+//- (IBAction)queryTwitterSearchAPI:(id)sender;
 
 
 @end

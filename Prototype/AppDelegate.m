@@ -27,8 +27,7 @@
     
     //Create Twitter post view
     TwitterViewController *twitterController = [[TwitterViewController alloc] init];
-    UINavigationController *twitterNavController = [[UINavigationController alloc] initWithRootViewController:twitterController];
-    [[twitterNavController view] setBackgroundColor:[UIColor clearColor]];
+    [[twitterController view] setBackgroundColor:[UIColor clearColor]];
     
     //Create map view
     [GMSServices provideAPIKey:kGOOGLE_IOS_API_KEY];
@@ -36,7 +35,7 @@
     
     //Create and load UITabBarController
     UITabBarController *mainController = [[UITabBarController alloc] init];
-    NSArray *viewControllers = [NSArray arrayWithObjects:facebookController, twitterNavController, mapController, nil];
+    NSArray *viewControllers = [NSArray arrayWithObjects:facebookController, twitterController, mapController, nil];
     [mainController setViewControllers:viewControllers];
     [self.window setRootViewController:mainController];
     
