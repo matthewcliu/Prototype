@@ -11,10 +11,6 @@
 @interface TwitterViewController : UIViewController <UISearchBarDelegate>
 {
     IBOutlet UISearchBar *twitterSearchBar;
-    //IBOutlet UIButton *queryButton;
 }
-
-//- (IBAction)queryTwitterSearchAPI:(id)sender;
-
 
 @end

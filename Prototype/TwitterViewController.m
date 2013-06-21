@@ -28,25 +28,15 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    //Add UITextField
+    //Add UISearchBar
     twitterSearchBar = [[UISearchBar alloc] init];
     [twitterSearchBar setPlaceholder:@"Enter a search query."];
     [twitterSearchBar setDelegate:self];
     [[self view] addSubview:twitterSearchBar];
     [twitterSearchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
     
-    /*
-    //Add UIButton
-    queryButton= [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [queryButton addTarget: self action:@selector(queryTwitterSearchAPI:) forControlEvents:UIControlEventTouchUpInside];
-    [queryButton setTitle:@"Search" forState:UIControlStateNormal];
-    [[self view] addSubview:queryButton];
-    [queryButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-     */
-
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[twitterSearchBar]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
+    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[twitterSearchBar]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
+    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
     
     
 }
@@ -84,19 +74,4 @@
     
 }
 
-/*
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    //Add query to Twitter API here
-    
-    [textField resignFirstResponder];
-    
-    return YES;
-}
-
-- (IBAction)queryTwitterSearchAPI:(id)sender
-{
- 
-}
- */
 @end

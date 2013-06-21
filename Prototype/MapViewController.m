@@ -81,8 +81,8 @@
     //Add placesType to main view and set visual constraints
     [mapView addSubview:placesTypes];
     [placesTypes setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[placesTypes]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[placesTypes]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
+    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[placesTypes]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
+    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[placesTypes]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(placesTypes)]];
     
 }
 
