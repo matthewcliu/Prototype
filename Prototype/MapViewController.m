@@ -140,7 +140,8 @@
     }
 }
 
-- (void)fetchFromGooglePlaces:(NSString *)googleType {
+- (void)fetchFromGooglePlaces:(NSString *)googleType
+{
     //Build the URL to send to Google
     CLLocationCoordinate2D currentCoordinate = [userLocation coordinate];
     
@@ -157,16 +158,23 @@
     });
 }
 
-- (void)parseGooglePlacesJson:(NSData *)responseData {
-    NSError * error;
-    NSDictionary* json = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
+- (void)parseGooglePlacesJson:(NSData *)responseData
+{
+    NSError *error;
+    NSDictionary *placesData = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&error];
     
     //The results will be an array obtained from the NSDictionary object with the key "results". This is done through visual inspection.
-    NSArray* places= [json objectForKey:@"results"];
-    [self plotMapMarkers:places];
+    if (placesData) {
+        NSArray *places = [placesData objectForKey:@"results"];
+        [self plotMapMarkers:places];
+    } else {
+        //Our JSON deserialization went awry
+        NSLog(@"JSON Error: %@", [error localizedDescription]);
+    }
 }
 
-- (void)plotMapMarkers:(NSArray *)returnedPlaces {
+- (void)plotMapMarkers:(NSArray *)returnedPlaces
+{
     //Remove previous map markers
     [mapView clear];
     
