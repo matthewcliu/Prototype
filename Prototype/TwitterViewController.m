@@ -61,6 +61,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+//Search bar methods
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
     [twitterSearchBar setShowsCancelButton:YES];
@@ -91,7 +93,6 @@
 }
 
 //Twitter methods
-
 - (BOOL)userHasAccessToTwitter
 {
     return [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter];
