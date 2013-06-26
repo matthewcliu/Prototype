@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E65EBD2C177A6ECF003FEEED /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E65EBD2B177A6ECF003FEEED /* Social.framework */; };
+		E65EBD2E177A6ED6003FEEED /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E65EBD2D177A6ED6003FEEED /* Accounts.framework */; };
 		E6C205CC1773BE3200CB816F /* TwitterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E6C205CB1773BE3200CB816F /* TwitterViewController.m */; };
 		E6F6B0AE1766A7CD00C49FE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F6B0AD1766A7CD00C49FE6 /* UIKit.framework */; };
 		E6F6B0B01766A7CD00C49FE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6F6B0AF1766A7CD00C49FE6 /* Foundation.framework */; };
@@ -35,6 +37,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E65EBD2B177A6ECF003FEEED /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		E65EBD2D177A6ED6003FEEED /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E6C205CA1773BE3200CB816F /* TwitterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterViewController.h; sourceTree = "<group>"; };
 		E6C205CB1773BE3200CB816F /* TwitterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterViewController.m; sourceTree = "<group>"; };
 		E6F6B0AA1766A7CD00C49FE6 /* Prototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E65EBD2E177A6ED6003FEEED /* Accounts.framework in Frameworks */,
+				E65EBD2C177A6ECF003FEEED /* Social.framework in Frameworks */,
 				E6F6B0E51766A91900C49FE6 /* SystemConfiguration.framework in Frameworks */,
 				E6F6B0E31766A91100C49FE6 /* QuartzCore.framework in Frameworks */,
 				E6F6B0E11766A90B00C49FE6 /* OpenGLES.framework in Frameworks */,
@@ -115,6 +121,8 @@
 		E6F6B0AC1766A7CD00C49FE6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E65EBD2D177A6ED6003FEEED /* Accounts.framework */,
+				E65EBD2B177A6ECF003FEEED /* Social.framework */,
 				E6F6B0E41766A91900C49FE6 /* SystemConfiguration.framework */,
 				E6F6B0E21766A91100C49FE6 /* QuartzCore.framework */,
 				E6F6B0E01766A90B00C49FE6 /* OpenGLES.framework */,

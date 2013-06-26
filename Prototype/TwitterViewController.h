@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Social/Social.h>
+#import <Accounts/Accounts.h>
 
 @interface TwitterViewController : UIViewController <UISearchBarDelegate>
 {
     IBOutlet UISearchBar *twitterSearchBar;
+    ACAccountStore *accountStore;
 }
 
 @end
