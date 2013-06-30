@@ -41,17 +41,30 @@
     [twitterSearchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     //Add Label
-    UILabel *introLabel = [[UILabel alloc] init];
+    introLabel = [[UILabel alloc] init];
     [introLabel setText:@"Search the Twitter Search API"];
     [introLabel setTextAlignment:NSTextAlignmentCenter];
     [[self view] addSubview:introLabel];
     [introLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
-
     
+    //Add UITableView
+    CGRect tableRect = CGRectMake(0, 80, [self view].frame.size.width, [self view].frame.size.height);
+    tweetTableView = [[UITableView alloc] initWithFrame:tableRect style:UITableViewStylePlain];
+    [tweetTableView setDelegate:self];
+    [tweetTableView setDataSource:self];
+    [[self view] addSubview:tweetTableView];
+    //[tweetTableView setHidden:YES];
+
+    //[tweetTableView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    //Add constraints
     [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[twitterSearchBar]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
     [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[introLabel]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(introLabel)]];
-    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]-50-[introLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar, introLabel)]];
-    
+    //[[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[tweetTableView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(tweetTableView)]];
+    [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]-10-[introLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar, introLabel)]];
+
+    //[[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]-10-[introLabel]-10-[tweetTableView]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar, introLabel, tweetTableView)]];
+
     
 }
 
@@ -89,6 +102,9 @@
     [searchBar resignFirstResponder];
     [searchBar setText:nil];
     [twitterSearchBar setShowsCancelButton:NO];
+    tweetArray = nil;
+    [tweetTableView reloadData];
+    [tweetTableView setNeedsDisplay];
     
 }
 
@@ -156,17 +172,16 @@
     
     if (searchData) {
         //NSLog(@"Twitter Server Response: %@\n", searchData);
-        NSArray *tweets = [searchData objectForKey:@"statuses"];
-        [self printTweets:tweets];
+        tweetArray = [searchData objectForKey:@"statuses"];
+        [self drawTweetTableView:tweetArray];
     } else {
         //Our JSON deserialization went awry
         NSLog(@"JSON Error: %@", [error localizedDescription]);
     }
 }
 
-- (void)printTweets:(NSArray *)returnedTweets
+- (void)drawTweetTableView:(NSArray *)returnedTweets
 {
-    NSLog(@"%@", returnedTweets);
     
     //Test to see if I can access tweet parameters.
     for (int i =0; i< [returnedTweets count]; i++) {
@@ -180,6 +195,49 @@
         NSLog(@"Name of user: %@", username);
         NSLog(@"Tweet: %@", tweetText);
     }
+    [tweetTableView setNeedsDisplay];
+    //[tweetTableView setHidden:NO];
+    [tweetTableView reloadData];
+
+}
+
+//UITableView Methods
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [tweetArray count];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"tweetCell";
+    
+    UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    if (cell == nil) {
+        
+        //Note copied cell formatting directly from FB documentation - standard tableViewCell formatting
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        
+        NSDictionary *tweet = [tweetArray objectAtIndex:[indexPath row]];
+        NSString *tweetText = [tweet objectForKey:@"text"];
+        NSDictionary *user = [tweet objectForKey:@"user"];
+        NSString *username = [user objectForKey:@"screen_name"];
+            
+        NSLog(@"In the tableview now. Name of user: %@", username);
+        NSLog(@"In the tableview now. Tweet: %@", tweetText);
+        
+        [[cell textLabel] setText:tweetText];
+        [[cell detailTextLabel] setText:username];
+        
+    }
+    
+    return cell;
 }
 
 @end

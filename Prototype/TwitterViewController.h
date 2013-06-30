@@ -10,10 +10,16 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
-@interface TwitterViewController : UIViewController <UISearchBarDelegate>
+@interface TwitterViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 {
     IBOutlet UISearchBar *twitterSearchBar;
+    IBOutlet UILabel *introLabel;
+    IBOutlet UITableView *tweetTableView;
+    
     ACAccountStore *accountStore;
+    NSArray *tweetArray;
+
 }
+
 
 @end
