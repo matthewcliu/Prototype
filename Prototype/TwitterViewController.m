@@ -212,4 +212,53 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //Create an instance of the Tweet sheet
+    SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+    
+    //Set the completion handler
+    tweetSheet.completionHandler = ^(SLComposeViewControllerResult result) {
+        switch (result) {
+                //This means the user cancelled without sending the Tweet
+            case SLComposeViewControllerResultCancelled:
+                break;
+            case SLComposeViewControllerResultDone:
+                break;
+                
+            default:
+                break;
+        }
+        
+        //dismiss the Tweet Sheet
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissViewControllerAnimated:NO completion:^{
+                NSLog(@"Tweet Sheet has been dismissed");
+            }];
+        });
+    };
+    
+    //Set the initial body of the Tweet
+
+    NSString *tweetText = [[NSString alloc] initWithString:[[tweetArray objectAtIndex:[indexPath row]] objectForKey:@"text"]];
+    [tweetSheet setInitialText: tweetText];
+    
+    //Adds an image to the Tweet. For demo purposes, assume we have an image named 'larry.png' that we wish to attach
+    if (![tweetSheet addImage:[UIImage imageNamed:@"larry.png"]]) {
+        NSLog(@"Unable to add the image");
+    }
+    
+    if (![tweetSheet addURL:[NSURL URLWithString:@"http://twitter.com/"]]) {
+        NSLog(@"Unable to add the URL");
+    }
+    
+    //Presents the Tweet Sheet to the user
+    [self presentViewController:tweetSheet animated:NO completion:^{
+        NSLog(@"Tweet sheet has been presented");
+    }];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+}
+
 @end
