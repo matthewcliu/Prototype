@@ -32,13 +32,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
-    //Add UISearchBar
-    twitterSearchBar = [[UISearchBar alloc] init];
-    [twitterSearchBar setPlaceholder:@"Enter a query"];
-    [twitterSearchBar setDelegate:self];
-    [[self view] addSubview:twitterSearchBar];
-    [twitterSearchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     //Add Label
     introLabel = [[UILabel alloc] init];
@@ -47,24 +40,25 @@
     [[self view] addSubview:introLabel];
     [introLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     
-    //Add UITableView
+    //Add UISearchBar
+    twitterSearchBar = [[UISearchBar alloc] init];
+    [twitterSearchBar setPlaceholder:@"Enter a query"];
+    [twitterSearchBar setDelegate:self];
+    [[self view] addSubview:twitterSearchBar];
+    [twitterSearchBar setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    //Add hidden UITableView that will get data from Twitter and pass it to UISearchDisplayController
     CGRect tableRect = CGRectMake(0, 80, [self view].frame.size.width, [self view].frame.size.height);
     tweetTableView = [[UITableView alloc] initWithFrame:tableRect style:UITableViewStylePlain];
     [tweetTableView setDelegate:self];
     [tweetTableView setDataSource:self];
     [[self view] addSubview:tweetTableView];
-    //[tweetTableView setHidden:YES];
-
-    //[tweetTableView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [tweetTableView setAutoresizingMask: UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth];
     
     //Add constraints
     [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[twitterSearchBar]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar)]];
     [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[introLabel]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(introLabel)]];
-    //[[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[tweetTableView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(tweetTableView)]];
     [[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]-10-[introLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar, introLabel)]];
-
-    //[[self view] addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[twitterSearchBar]-10-[introLabel]-10-[tweetTableView]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(twitterSearchBar, introLabel, tweetTableView)]];
-
     
 }
 
@@ -88,8 +82,10 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    //Add method for calling Twitter
     NSString *query = [searchBar text];
+
+    tweetArray = nil;
+    [tweetTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
     [self searchTwitterAPI:query];
     
     [searchBar resignFirstResponder];
@@ -99,13 +95,14 @@
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
     
-    [searchBar resignFirstResponder];
     [searchBar setText:nil];
+
     [twitterSearchBar setShowsCancelButton:NO];
     tweetArray = nil;
-    [tweetTableView reloadData];
-    [tweetTableView setNeedsDisplay];
+    [tweetTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
     
+    [searchBar resignFirstResponder];
+
 }
 
 //Twitter methods
@@ -116,10 +113,6 @@
 
 - (void)searchTwitterAPI:(NSString *)query
 {
-    NSLog(@"%@", query);
-    //Step 0: Check that the user has local Twitter accounts
-    
-    NSLog(@"User has access to Twitter: %c", [self userHasAccessToTwitter]);
     
     if ([self userHasAccessToTwitter]) {
         //Step 1: Obtains access to Twitter accounts
@@ -127,8 +120,6 @@
         
         [accountStore requestAccessToAccountsWithType:twitterAccountType options:NULL completion:^(BOOL granted, NSError *error) {
             if (granted) {
-                
-                NSLog(@"Granted: %c", granted);
                 
                 //Step 2: Create a request
                 NSArray *twitterAccounts = [accountStore accountsWithAccountType:twitterAccountType];
@@ -138,11 +129,9 @@
                 NSURL *url = [NSURL URLWithString:queryString];
                 
                 SLRequest *request = [SLRequest requestForServiceType:SLServiceTypeTwitter requestMethod:SLRequestMethodGET URL:url parameters:nil];
-                NSLog(@"The request is: %@", request);
                 
                 //attach an account to the request - this is mandatory - normally this is not a clean way to request the right account but this is fine for the example
                 [request setAccount:[twitterAccounts lastObject]];
-                NSLog(@"The account used for the account is: %@", [request account]);
                 
                 //Step 3: Execute the request - note that this is not done asynchronously yet like with Google - refactor later
                 [request performRequestWithHandler:^(NSData *responseData, NSHTTPURLResponse *urlResponse, NSError *error) {
@@ -171,34 +160,13 @@
     NSDictionary *searchData = [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingAllowFragments error: &error];
     
     if (searchData) {
-        //NSLog(@"Twitter Server Response: %@\n", searchData);
+        tweetArray = nil;
         tweetArray = [searchData objectForKey:@"statuses"];
-        [self drawTweetTableView:tweetArray];
+        [tweetTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
     } else {
         //Our JSON deserialization went awry
         NSLog(@"JSON Error: %@", [error localizedDescription]);
     }
-}
-
-- (void)drawTweetTableView:(NSArray *)returnedTweets
-{
-    
-    //Test to see if I can access tweet parameters.
-    for (int i =0; i< [returnedTweets count]; i++) {
-        
-        //Traverse the JSON object tree
-        NSDictionary *tweet = [returnedTweets objectAtIndex:i];
-        NSString *tweetText = [tweet objectForKey:@"text"];
-        NSDictionary *user = [tweet objectForKey:@"user"];
-        NSString *username = [user objectForKey:@"screen_name"];
-        
-        NSLog(@"Name of user: %@", username);
-        NSLog(@"Tweet: %@", tweetText);
-    }
-    [tweetTableView setNeedsDisplay];
-    //[tweetTableView setHidden:NO];
-    [tweetTableView reloadData];
-
 }
 
 //UITableView Methods
@@ -219,9 +187,13 @@
     
     UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
+    NSLog(@"cellForRowAtIndexPath called - cell is currently %@", cell);
+
+    //Hacky way of fixing the reload issue - need to refactor this
+    cell = nil;
+    
     if (cell == nil) {
         
-        //Note copied cell formatting directly from FB documentation - standard tableViewCell formatting
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         
         NSDictionary *tweet = [tweetArray objectAtIndex:[indexPath row]];
